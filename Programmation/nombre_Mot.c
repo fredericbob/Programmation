@@ -1,6 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char *c[] = {
+    "4cent", "9deux-cents", "9trois-cents", "10quatre-cents",
+    "8cinq-cents", "8six-cents", "9sept-cents", "9huit-cents", "8neuf-cents"};
+
+char *mille = "5mille";
+char *million = "7million";
+
 void ajoutTaille(char **i, int taille)
 {
     for (int j = 0; j < taille; j++)
@@ -27,7 +34,7 @@ void ajoutTaille(char **i, int taille)
     }
 }
 
-void affiche_mot(char **i, int n, char **j)
+void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million)
 {
     if (n < 20)
     {
@@ -46,7 +53,14 @@ void affiche_mot(char **i, int n, char **j)
     else if (n >= 70 && n < 80)
     {
         int unite = n - 70;
-        printf("%s", j[4] + 1);
+        if (unite == 0)
+        {
+            printf("%s", j[5] + 2);
+        }
+        else
+        {
+            printf("%s", j[4] + 1);
+        }
         if (unite > 0)
         {
             printf("-%s", i[unite + 10] + 1);
@@ -55,10 +69,61 @@ void affiche_mot(char **i, int n, char **j)
     else if (n >= 80 && n < 100)
     {
         int unite = n - 80;
-        printf("%s", j[6] + 2);
+        if (unite == 0)
+        {
+            printf("%s", j[7] + 2);
+        }
+        else if (unite < 10)
+        {
+            printf("%s", j[6] + 1);
+        }
+        else
+        {
+            printf("%s", j[6] + 2);
+        }
+
         if (unite > 0)
         {
             printf("-%s", i[unite] + 1);
+        }
+    }
+    else if (n >= 100 && n < 1000)
+    {
+        int centaine = n / 100;
+        int reste = n % 100;
+        printf("%s", c[centaine - 1] + 1);
+        if (reste > 0)
+        {
+            printf(" ");
+            affiche_mot(i, reste, j, c, mille, million);
+        }
+    }
+
+    else if (n >= 1000 && n < 1000000)
+    {
+        int millier = n / 1000;
+        int reste = n % 1000;
+        if (millier > 1)
+        {
+            affiche_mot(i, millier, j, c, mille, million);
+        }
+        printf(" %s", mille + 1);
+        if (reste > 0)
+        {
+            printf(" ");
+            affiche_mot(i, reste, j, c, mille, million);
+        }
+    }
+    else if (n >= 1000000)
+    {
+        int millions = n / 1000000;
+        int reste = n % 1000000;
+        affiche_mot(i, millions, j, c, mille, million);
+        printf(" %s", million + 1);
+        if (reste > 0)
+        {
+            printf(" ");
+            affiche_mot(i, reste, j, c, mille, million);
         }
     }
 }
@@ -66,7 +131,7 @@ void affiche_mot(char **i, int n, char **j)
 int main()
 {
     int taille = 19;
-    int nombre = 82;
+    int nombre = 1999;
     char **i = (char **)malloc(20 * sizeof(char *));
     i[0] = "zero";
     i[1] = "un";
@@ -99,7 +164,7 @@ int main()
 
     char *v[] = {
         "5vingt", "6trente", "8quarante", "9cinquante", "8soixante",
-        "11soixante-dix", "13quatre-vingts", "16quatre-vingt-dix"};
+        "11soixante-dix", "13quatre-vingts", "16quatre-vingt-dix", "4cent"};
 
     ajoutTaille(i, 20);
     for (int j = 0; j < 20; j++)
@@ -107,13 +172,7 @@ int main()
         printf("i[%d] = %s\n", j, i[j]);
     }
 
-    ajoutTaille(t, 8);
-    for (int j = 0; j < 8; j++)
-    {
-        printf("Pour le 20 est superieur i[%d] = %s\n", j, t[j]);
-    }
-
-    affiche_mot(k, nombre, t);
+    affiche_mot(k, nombre, v, c, mille, million);
 
     for (int j = 0; j < taille; j++)
     {
