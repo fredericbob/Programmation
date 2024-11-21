@@ -90,11 +90,11 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
     else if (n >= 100 && n < 1000)
     {
         int centaine = n / 100;
-        int reste = n % 100;
+        int reste = n - (centaine * 100);
         printf("%s", c[centaine - 1] + 1);
         if (reste > 0)
         {
-            printf(" ");
+            printf("-");
             affiche_mot(i, reste, j, c, mille, million);
         }
     }
@@ -102,27 +102,27 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
     else if (n >= 1000 && n < 1000000)
     {
         int millier = n / 1000;
-        int reste = n % 1000;
+        int reste = n - (millier * 1000);
         if (millier > 1)
         {
             affiche_mot(i, millier, j, c, mille, million);
         }
-        printf(" %s", mille + 1);
+        printf("-%s", mille + 1);
         if (reste > 0)
         {
-            printf(" ");
+            printf("");
             affiche_mot(i, reste, j, c, mille, million);
         }
     }
     else if (n >= 1000000)
     {
         int millions = n / 1000000;
-        int reste = n % 1000000;
+        int reste = n - (millions * 1000000);
         affiche_mot(i, millions, j, c, mille, million);
-        printf(" %s", million + 1);
+        printf("-%s", million + 1);
         if (reste > 0)
         {
-            printf(" ");
+            printf("-");
             affiche_mot(i, reste, j, c, mille, million);
         }
     }
@@ -131,7 +131,7 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
 int main()
 {
     int taille = 19;
-    int nombre = 1999;
+    int nombre = 109;
     char **i = (char **)malloc(20 * sizeof(char *));
     i[0] = "zero";
     i[1] = "un";
@@ -154,9 +154,10 @@ int main()
     i[18] = "dix-huit";
     i[19] = "dix-neuf";
 
-    char *k[] = {
-        "4zero", "2un", "4deux", "5trois", "6quatre", "4cinq", "3six", "4sept", "4huit", "4neuf",
-        "3dix", "4onze", "5douze", "6treize", "8quatorze", "6quinze", "5seize", "8dix-sept", "8dix-huit", "8dix-neuf"};
+    char *
+        k[] = {
+            "4zero", "2un", "4deux", "5trois", "6quatre", "4cinq", "3six", "4sept", "4huit", "4neuf",
+            "3dix", "4onze", "5douze", "6treize", "8quatorze", "6quinze", "5seize", "8dix-sept", "8dix-huit", "8dix-neuf"};
 
     char *t[] = {
         "vingt", "trente", "quarante", "cinquante", "soixante",
