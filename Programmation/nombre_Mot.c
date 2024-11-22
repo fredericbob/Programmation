@@ -73,10 +73,6 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
         {
             printf("%s", j[7] + 2);
         }
-        else if (unite < 10)
-        {
-            printf("%s", j[6] + 1);
-        }
         else
         {
             printf("%s", j[6] + 2);
@@ -131,7 +127,7 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
 int main()
 {
     int taille = 19;
-    int nombre = 109;
+    int nombre = 81;
     char **i = (char **)malloc(20 * sizeof(char *));
     i[0] = "zero";
     i[1] = "un";
