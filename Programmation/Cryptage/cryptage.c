@@ -50,7 +50,7 @@ char *cryptage(char *word, int nombre, int types)
     else if (types == 4)
     {
         {
-            for (int i = 0; i < 26; i++)
+            for (int i = 1; i < 26; i++)
             {
                 int c = (word[i] - 'a');
                 if ((c % nombre) == 0)
@@ -74,7 +74,7 @@ char *cryptage(char *word, int nombre, int types)
 int main(void)
 {
     char a = 'a';
-    int nombre = 3;
+    int nombre = 2;
     int type = 4;
     char *word = alphabe();
     printf("%s\n", word);
