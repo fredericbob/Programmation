@@ -127,7 +127,7 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
 int main()
 {
     int taille = 19;
-    int nombre = 81;
+    int nombre = 75;
     char **i = (char **)malloc(20 * sizeof(char *));
     i[0] = "zero";
     i[1] = "un";
