@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *alphabe()
+char *alphabe(char a)
 {
     char *resultat = (char *)malloc(27 * sizeof(char));
     for (int i = 0; i < 26; i++)
     {
-        resultat[i] = 'a' + i;
+        resultat[i] = a + i;
     }
     resultat[26] = '\0';
     return resultat;
@@ -14,73 +14,136 @@ char *alphabe()
 
 char *cryptage(char *word, int nombre, int types)
 {
-    char *resultat = (char *)malloc(27 * sizeof(char));
+
+    int length = 0;
+    while (word[length] != '\0')
+    {
+        length++;
+    }
+
+    char *resultat = (char *)malloc((length + 1) * sizeof(char));
     int j = 0;
 
-    if (types == 1)
+    for (int i = 0; i < length; i++)
     {
-        for (int i = 0; i < 26; i++)
-        {
-            resultat[i] = 'a' + (word[i] - 'a' + nombre) % 26;
-        }
-        resultat[26] = '\0';
-    }
+        char c = word[i];
 
-    else if (types == 2)
-    {
-        for (int i = 0; i < 26; i++)
+        if (types == 1)
         {
-            int shift = (word[i] - 'a' - nombre);
-            if (shift < 0)
-                shift += 26;
-            resultat[i] = 'a' + shift % 26;
-        }
-        resultat[26] = '\0';
-    }
-
-    else if (types == 3)
-    {
-        for (int i = 0; i < 26; i++)
-        {
-            resultat[i] = 'a' + ((word[i] - 'a') * nombre) % 26;
-        }
-        resultat[26] = '\0';
-    }
-
-    else if (types == 4)
-    {
-        {
-            for (int i = 1; i < 26; i++)
+            if (c >= 'a' && c <= 'z')
             {
-                int c = (word[i] - 'a');
-                if ((c % nombre) == 0)
+                resultat[j] = 'a' + (c - 'a' + nombre) % 26;
+            }
+            else if (c >= 'A' && c <= 'Z')
+            {
+                resultat[j] = 'A' + (c - 'A' + nombre) % 26;
+            }
+            else
+            {
+                resultat[j] = c;
+            }
+        }
+        else if (types == 2)
+        {
+            if (c >= 'a' && c <= 'z')
+            {
+                int shift = (c - 'a' - nombre);
+                if (shift < 0)
+                    shift += 26;
+                resultat[j] = 'a' + shift % 26;
+            }
+            else if (c >= 'A' && c <= 'Z')
+            {
+                int shift = (c - 'A' - nombre);
+                if (shift < 0)
+                    shift += 26;
+                resultat[j] = 'A' + shift % 26;
+            }
+            else
+            {
+                resultat[j] = c;
+            }
+        }
+        else if (types == 3)
+        {
+            if (c >= 'a' && c <= 'z')
+            {
+                resultat[j] = 'a' + ((c - 'a') * nombre) % 26;
+            }
+            else if (c >= 'A' && c <= 'Z')
+            {
+                resultat[j] = 'A' + ((c - 'A') * nombre) % 26;
+            }
+            else
+            {
+                resultat[j] = c;
+            }
+        }
+        else if (types == 4)
+        {
+            if (c >= 'a' && c <= 'z')
+            {
+                int division = (c - 'a') / nombre;
+                if ((c - 'a') % nombre == 0 && division >= 0 && division < 26)
                 {
-                    int division = c / nombre;
-
-                    if (division >= 0 && division < 26)
-                    {
-                        resultat[j] = 'a' + division;
-                        j++;
-                    }
+                    resultat[j] = 'a' + division;
+                }
+                else
+                {
+                    resultat[j] = c;
                 }
             }
-            resultat[j] = '\0';
+            else if (c >= 'A' && c <= 'Z')
+            {
+                int division = (c - 'A') / nombre;
+                if ((c - 'A') % nombre == 0 && division >= 0 && division < 26)
+                {
+                    resultat[j] = 'A' + division;
+                }
+                else
+                {
+                    resultat[j] = c;
+                }
+            }
+            else
+            {
+                resultat[j] = c;
+            }
         }
+        j++;
     }
 
+    resultat[j] = '\0';
     return resultat;
 }
 
 int main(void)
 {
-    char a = 'a';
+    char *lettre = malloc(15 * sizeof(char));
+
+    lettre[0] = 'j';
+    lettre[1] = 'e';
+    lettre[2] = ' ';
+    lettre[3] = 's';
+    lettre[4] = 'u';
+    lettre[5] = 'i';
+    lettre[6] = 's';
+    lettre[7] = ' ';
+    lettre[8] = 'n';
+    lettre[9] = 'e';
+    lettre[10] = 'e';
+    lettre[11] = ' ';
+    lettre[12] = 'e';
+    lettre[13] = 'n';
+    lettre[14] = ' ';
+    lettre[15] = '\0';
+
     int nombre = 2;
-    int type = 4;
-    char *word = alphabe();
-    printf("%s\n", word);
-    char *resultat = cryptage(word, nombre, type);
+    int type = 1;
+
+    char *resultat = cryptage(lettre, nombre, type);
     printf("%s", resultat);
 
-    free(word);
+    free(lettre);
     free(resultat);
 }
