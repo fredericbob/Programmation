@@ -1,38 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *c[] = {
-    "4cent", "9deux-cents", "9trois-cents", "10quatre-cents",
-    "8cinq-cents", "8six-cents", "9sept-cents", "9huit-cents", "8neuf-cents"};
-
 char *mille = "5mille";
 char *million = "7million";
-
-void ajoutTaille(char **i, int taille)
-{
-    for (int j = 0; j < taille; j++)
-    {
-        int tailleC = 0;
-        char *str = i[j];
-        while (*str != '\0')
-        {
-            tailleC++;
-            str++;
-        }
-        char *nouveauTableau = (char *)malloc((tailleC + 2) * sizeof(char));
-        nouveauTableau[0] = '0' + tailleC;
-        char *tv = nouveauTableau + 1;
-        char *a = i[j];
-        while (*a != '\0')
-        {
-            *tv = *a;
-            a++;
-            tv++;
-        }
-        *tv = '\0';
-        i[j] = nouveauTableau;
-    }
-}
 
 void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million)
 {
@@ -87,7 +57,15 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
     {
         int centaine = n / 100;
         int reste = n - (centaine * 100);
-        printf("%s", c[centaine - 1] + 1);
+        if (n == 400)
+        {
+            printf("%s", c[centaine - 1] + 2);
+        }
+        else
+        {
+            printf("%s", c[centaine - 1] + 1);
+        }
+
         if (reste > 0)
         {
             printf("-");
@@ -126,56 +104,55 @@ void affiche_mot(char **i, int n, char **j, char **c, char *mille, char *million
 
 int main()
 {
-    int taille = 19;
-    int nombre = 1400;
-    char **i = (char **)malloc(20 * sizeof(char *));
-    i[0] = "zero";
-    i[1] = "un";
-    i[2] = "deux";
-    i[3] = "trois";
-    i[4] = "quatre";
-    i[5] = "cinq";
-    i[6] = "six";
-    i[7] = "sept";
-    i[8] = "huit";
-    i[9] = "neuf";
-    i[10] = "dix";
-    i[11] = "onze";
-    i[12] = "douze";
-    i[13] = "treize";
-    i[14] = "quatorze";
-    i[15] = "quinze";
-    i[16] = "seize";
-    i[17] = "dix-sept";
-    i[18] = "dix-huit";
-    i[19] = "dix-neuf";
 
-    char *
-        k[] = {
-            "4zero", "2un", "4deux", "5trois", "6quatre", "4cinq", "3six", "4sept", "4huit", "4neuf",
-            "3dix", "4onze", "5douze", "6treize", "8quatorze", "6quinze", "5seize", "8dix-sept", "8dix-huit", "8dix-neuf"};
+    int nombre = 1670;
+    char **i = malloc(20 * sizeof(char *));
+    i[0] = "4zero";
+    i[1] = "2un";
+    i[2] = "4deux";
+    i[3] = "5trois";
+    i[4] = "6quatre";
+    i[5] = "4cinq";
+    i[6] = "3six";
+    i[7] = "4sept";
+    i[8] = "4huit";
+    i[9] = "4neuf";
+    i[10] = "3dix";
+    i[11] = "4onze";
+    i[12] = "5douze";
+    i[13] = "6treize";
+    i[14] = "8quatorze";
+    i[15] = "6quinze";
+    i[16] = "5seize";
+    i[17] = "8dix-sept";
+    i[18] = "8dix-huit";
+    i[19] = "8dix-neuf";
+    char **v = malloc(9 * sizeof(char *));
+    v[0] = "5vingt";
+    v[1] = "6trente";
+    v[2] = "8quarante";
+    v[3] = "9cinquante";
+    v[4] = "8soixante";
+    v[5] = "11soixante-dix";
+    v[6] = "13quatre-vingts";
+    v[7] = "16quatre-vingt-dix";
+    v[8] = "4cent";
+    char **c = malloc(9 * sizeof(char *));
+    c[0] = "4cent";
+    c[1] = "8deux-cent";
+    c[2] = "9trois-cent";
+    c[3] = "10quatre-cent";
+    c[4] = "8cinq-cent";
+    c[5] = "7six-cent";
+    c[6] = "8sept-cent";
+    c[7] = "8huit-cent";
+    c[8] = "8neuf-cent";
 
-    char *t[] = {
-        "vingt", "trente", "quarante", "cinquante", "soixante",
-        "soixante-dix", "quatre-vingts", "quatre-vingt-dix"};
+    affiche_mot(i, nombre, v, c, mille, million);
+    printf("\n");
 
-    char *v[] = {
-        "5vingt", "6trente", "8quarante", "9cinquante", "8soixante",
-        "11soixante-dix", "13quatre-vingts", "16quatre-vingt-dix", "4cent"};
-
-    ajoutTaille(i, 20);
-    for (int j = 0; j < 20; j++)
-    {
-        printf("i[%d] = %s\n", j, i[j]);
-    }
-
-    affiche_mot(k, nombre, v, c, mille, million);
-
-    for (int j = 0; j < taille; j++)
-    {
-        free(i[j]);
-    }
     free(i);
-
+    free(v);
+    free(c);
     return 0;
 }
