@@ -38,6 +38,66 @@ void traiter_racine_carre(const char *entree, char *sortie)
     }
     sortie[j] = '\0'; // Terminer la chaîne
 }
+void traiter_parentheses_premier(const char *str, char *resultat)
+{
+    int i = 0, j = 0;
+    int signe = 1; // Par défaut, pas de signe
+
+    // Parcours de l'expression
+    while (str[i] != '\0')
+    {
+        if (str[i] == '(')
+        {
+            i++; // Ignorer la parenthèse ouvrante
+            // Changer de signe si on rencontre un '-'
+            if (str[i] == '-')
+            {
+                signe = -1;
+                i++;
+            }
+            else if (str[i] == '+')
+            {
+                signe = 1;
+                i++;
+            }
+        }
+        // Si on rencontre une parenthèse fermante, revenir à signe positif
+        else if (str[i] == ')')
+        {
+            i++;       // Ignorer la parenthèse fermante
+            signe = 1; // Par défaut, après la parenthèse fermée, on reprend le signe normal
+        }
+
+        // Traiter le cas de 'x_2' pour le second degré
+        else if (str[i] == 'x' && str[i + 1] == '_' && str[i + 2] == '2')
+        {
+            resultat[j++] = 'x';
+            resultat[j++] = '^';
+            resultat[j++] = '2';
+            i += 3; // Passer 'x_2'
+        }
+        // Traiter les signes en fonction de leur position
+        else if (str[i] == '+' || str[i] == '-')
+        {
+            if (signe == -1)
+            {
+                // Inverser le signe
+                resultat[j++] = (str[i] == '+') ? '-' : '+';
+            }
+            else
+            {
+                resultat[j++] = str[i];
+            }
+            i++;
+        }
+        else
+        {
+            // Copier les autres caractères (chiffres ou variables)
+            resultat[j++] = str[i++];
+        }
+    }
+    resultat[j] = '\0'; // Terminer la chaîne résultante
+}
 
 // Fonction pour analyser un côté de l'équation
 void analyser_cote(const char *str, int *coef_x, int *constante)
@@ -126,8 +186,13 @@ void resoudre_equation(const char *equation)
     }
     droite[j] = '\0';
 
-    analyser_cote(gauche, &coef_x_gauche, &constante_gauche);
-    analyser_cote(droite, &coef_x_droite, &constante_droite);
+    // Traiter les parenthèses
+    char gauche_sans_parentheses[100], droite_sans_parentheses[100];
+    traiter_parentheses_premier(gauche, gauche_sans_parentheses);
+    traiter_parentheses_premier(droite, droite_sans_parentheses);
+
+    analyser_cote(gauche_sans_parentheses, &coef_x_gauche, &constante_gauche);
+    analyser_cote(droite_sans_parentheses, &coef_x_droite, &constante_droite);
 
     // Calculer le résultat
     int coef_x = coef_x_gauche - coef_x_droite;
@@ -149,6 +214,53 @@ void resoudre_equation(const char *equation)
         double x = (double)constante / coef_x;
         printf("Solution : x = %.2f\n", x);
     }
+}
+
+void traiter_parentheses(const char *str, char *resultat)
+{
+    int i = 0, j = 0;
+    int signe = 1; // Par défaut, pas de signe
+
+    // Parcours de l'expression
+    while (str[i] != '\0')
+    {
+        if (str[i] == '(')
+        {
+            i++; // Ignorer la parenthèse ouvrante
+            // Changer de signe si on rencontre un '-'
+            if (str[i] == '-')
+            {
+                signe = -1;
+                i++;
+            }
+            else if (str[i] == '+')
+            {
+                signe = 1;
+                i++;
+            }
+        }
+        // Si on rencontre une parenthèse fermante, revenir à signe positif
+        else if (str[i] == ')')
+        {
+            i++;       // Ignorer la parenthèse fermante
+            signe = 1; // Par défaut, après la parenthèse fermée, on reprend le signe normal
+        }
+
+        // Convertir 'x_2' en 'x^2' et copier
+        else if (str[i] == 'x' && str[i + 1] == '_' && str[i + 2] == '2')
+        {
+            resultat[j++] = 'x';
+            resultat[j++] = '^';
+            resultat[j++] = '2';
+            i += 3; // Passer 'x_2'
+        }
+        // Copier le reste des caractères
+        else
+        {
+            resultat[j++] = str[i++];
+        }
+    }
+    resultat[j] = '\0'; // Terminer la chaîne résultante
 }
 
 void analyser_cote_second_degre(const char *str, int *coef_x2, int *coef_x, int *constante)
@@ -185,10 +297,10 @@ void analyser_cote_second_degre(const char *str, int *coef_x2, int *coef_x, int 
         num *= signe;
 
         // Vérifier si c'est un coefficient de x^2
-        if (str[i] == 'x' && str[i + 1] == '_' && str[i + 2] == '2')
+        if (str[i] == 'x' && str[i + 1] == '^' && str[i + 2] == '2')
         {
             *coef_x2 += num;
-            i += 3; // Passer 'x_2'
+            i += 3; // Passer 'x^2'
         }
         // Vérifier si c'est un coefficient de x
         else if (str[i] == 'x')
@@ -209,7 +321,7 @@ void resoudre_second_degre(const char *equation)
     int coef_x2_gauche = 0, coef_x_gauche = 0, constante_gauche = 0;
     int coef_x2_droite = 0, coef_x_droite = 0, constante_droite = 0;
 
-    // Diviser l'équation en deux parties
+    // Diviser l'équation en deux parties : gauche et droite
     const char *separateur = equation;
     while (*separateur != '=' && *separateur != '\0')
     {
@@ -238,8 +350,13 @@ void resoudre_second_degre(const char *equation)
     }
     droite[j] = '\0';
 
-    analyser_cote_second_degre(gauche, &coef_x2_gauche, &coef_x_gauche, &constante_gauche);
-    analyser_cote_second_degre(droite, &coef_x2_droite, &coef_x_droite, &constante_droite);
+    // Supprimer les parenthèses et analyser les côtés
+    char gauche_sans_parentheses[100], droite_sans_parentheses[100];
+    traiter_parentheses(gauche, gauche_sans_parentheses);
+    traiter_parentheses(droite, droite_sans_parentheses);
+
+    analyser_cote_second_degre(gauche_sans_parentheses, &coef_x2_gauche, &coef_x_gauche, &constante_gauche);
+    analyser_cote_second_degre(droite_sans_parentheses, &coef_x2_droite, &coef_x_droite, &constante_droite);
 
     // Calculer les coefficients totaux
     int coef_x2 = coef_x2_gauche - coef_x2_droite;
@@ -282,7 +399,7 @@ void separer_phrase(const char *input, char *texte, char *equation)
     {
         // Condition pour détecter un chiffre ou 'x_' suivi de chiffres
         if ((input[i] >= '0' && input[i] <= '9') ||
-            (input[i] == 'x' && input[i + 1] != ' ') || input[i] == 'V')
+            (input[i] == 'x' && input[i + 1] != ' ') || input[i] == 'V' || input[i] == '(' || input[i] == '-')
         {
             break; // On arrête dès qu'on trouve un chiffre ou 'x_'
         }
@@ -313,14 +430,14 @@ int main()
 {
     char texte1[100], equations1[100], equation_traitee1[100];
     ;
-    const char equation[] = "firy x raha 4x-V16=0"; // Exemple d'équation
+    const char equation[] = "firy x raha (4x+4)+4=1"; // Exemple d'équation
     separer_phrase(equation, texte1, equations1);
     printf("Texte: %s\n", texte1);
     printf("Equation premier degrer: %s\n", equations1);
     traiter_racine_carre(equations1, equation_traitee1);
     resoudre_equation(equation_traitee1);
 
-    const char input[] = "firy x raha x_2-3x-10=0";
+    const char input[] = "firy x raha x_2-3x-9=1";
     char texte[100], equations_de[100], equation_traitee[100];
     ; // Tableau pour stocker les résultats
 
