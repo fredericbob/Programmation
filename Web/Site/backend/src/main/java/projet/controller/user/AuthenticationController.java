@@ -3,17 +3,18 @@ package projet.controller.user;
 import projet.Configurations.JWTManager;
 import projet.model.Authentication;
 import projet.model.Utilisateur;
-
+import projet.service.EmailService;
 import projet.service.UtilisateurService;
 import projet.Resultat.Resultat;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +25,9 @@ import java.util.Optional;
 public class AuthenticationController {
 
     private final UtilisateurService utilisateurService;
+
+    @Autowired
+    private EmailService emailService;
 
     private Map<String, String> tokens = new HashMap<>();
     @Autowired
@@ -52,6 +56,17 @@ public class AuthenticationController {
             return buildAuthResponse(user.getEmail(), user.getPassword());
         } catch (Exception e) {
             return ResponseEntity.ok().body(new Resultat("Authentication failed", e.getMessage(), null));
+        }
+    }
+
+    @GetMapping("/validate")
+    public String validateUser(@RequestParam String token) {
+        // Validation de l'utilisateur via le token
+        boolean isValidated = utilisateurService.validateUserByToken(token);
+        if (isValidated) {
+            return "Account successfully validated!";
+        } else {
+            return "Invalid or expired token.";
         }
     }
 

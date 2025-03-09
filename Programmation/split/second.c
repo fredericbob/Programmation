@@ -95,26 +95,28 @@ int puissance(int base, int exp)
 // Fonction pour analyser un côté de l'équation avec prise en charge des parenthèses
 void analyser_cote_caluclX(const char *str, int *coef_x, int *coef_x2, int *constante, int valeur_x)
 {
-    int i = 0, signe = 1;
+    int i = 0, signe = 1; // Le signe global commence à 1 (positif)
+
     while (str[i] != '\0')
     {
         // Gestion des signes
         if (str[i] == '-')
         {
-            signe = -1;
+            signe = -1; // Si on rencontre un '-', on inverse le signe
             i++;
         }
         else if (str[i] == '+')
         {
-            signe = 1;
+            signe = 1; // Si on rencontre un '+', on garde le signe positif
             i++;
         }
 
-        // Si une parenthèse ouvrante est trouvée
+        // Si une parenthèse ouvrante est trouvée, traiter le contenu de la parenthèse
         if (str[i] == '(')
         {
             i++; // Passer la parenthèse ouvrante
             int temp_coef_x = 0, temp_coef_x2 = 0, temp_constante = 0;
+            int temp_signe = signe; // Garder le signe avant la parenthèse pour l'utiliser à l'intérieur
 
             // Analyser l'expression à l'intérieur des parenthèses
             while (str[i] != ')' && str[i] != '\0')
@@ -134,33 +136,34 @@ void analyser_cote_caluclX(const char *str, int *coef_x, int *coef_x2, int *cons
                     num = 1; // Par défaut, coefficient de x est 1
                 }
 
+                // Analyser si c'est un terme avec 'x' ou 'x_2'
                 if (str[i] == 'x')
                 {
                     i++;
                     if (str[i] == '_' && str[i + 1] == '2')
                     {
                         i += 2; // Passer '_2'
-                        temp_coef_x2 += signe * num;
+                        temp_coef_x2 += temp_signe * num;
                     }
                     else
                     {
-                        temp_coef_x += signe * num;
+                        temp_coef_x += temp_signe * num;
                     }
                 }
                 else
                 {
-                    temp_constante += signe * num;
+                    temp_constante += temp_signe * num;
                 }
 
                 // Gestion des signes à l'intérieur des parenthèses
                 if (str[i] == '-')
                 {
-                    signe = -1;
+                    temp_signe = -1;
                     i++;
                 }
                 else if (str[i] == '+')
                 {
-                    signe = 1;
+                    temp_signe = 1;
                     i++;
                 }
             }
@@ -181,6 +184,7 @@ void analyser_cote_caluclX(const char *str, int *coef_x, int *coef_x2, int *cons
             int num = 0;
             int chiffre_trouve = 0;
 
+            // Lire un nombre (ou un coefficient)
             while (str[i] >= '0' && str[i] <= '9')
             {
                 num = num * 10 + (str[i] - '0');
@@ -189,9 +193,10 @@ void analyser_cote_caluclX(const char *str, int *coef_x, int *coef_x2, int *cons
             }
             if (!chiffre_trouve)
             {
-                num = 1;
+                num = 1; // Par défaut, coefficient de x est 1
             }
 
+            // Analyser si c'est un terme avec 'x' ou 'x_2'
             if (str[i] == 'x')
             {
                 i++;
@@ -212,6 +217,7 @@ void analyser_cote_caluclX(const char *str, int *coef_x, int *coef_x2, int *cons
         }
     }
 }
+
 int calculer_f(const char *equation, int valeur_x)
 {
     char gauche[100], droite[100];
@@ -266,7 +272,7 @@ int calculer_f(const char *equation, int valeur_x)
 
 int main()
 {
-    const char input[] = "firy f(-2) raha -1-x_2=1";
+    const char input[] = "firy f(2) raha -2(1-x_2)=1";
     char texte[100], equation[100];
     int valeur_f = 0;
 
