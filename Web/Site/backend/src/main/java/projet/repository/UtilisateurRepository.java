@@ -13,4 +13,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
     @Query("select e from Utilisateur e where e.email = :email")
     Optional<Utilisateur> findByEmail(@Param("email") String email);
 
+    @Query(value = "SELECT * FROM utilisateur WHERE validation_token = :validationToken", nativeQuery = true)
+    Utilisateur findByValidationToken(@Param("validationToken") String validationToken);
 }

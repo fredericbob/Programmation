@@ -25,6 +25,28 @@ public class Utilisateur {
     @Column(name = "account_locked")
     private boolean accountLocked = false;
 
+    @Column(name = "validationToken")
+    private String validationToken; // Token de validation pour l'activation du compte
+
+    public String getValidationToken() {
+        return validationToken;
+    }
+
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
+    }
+
+    public boolean isValidated() {
+        return isValidated;
+    }
+
+    public void setValidated(boolean isValidated) {
+        this.isValidated = isValidated;
+    }
+
+    @Column(name = "isValidated")
+    private boolean isValidated;
+
     public Utilisateur(int id) {
         this.id = id;
     }

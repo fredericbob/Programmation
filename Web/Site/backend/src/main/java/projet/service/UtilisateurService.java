@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UtilisateurService {
@@ -69,8 +70,12 @@ public class UtilisateurService {
             if (utilisateur.getEmail() == null || utilisateur.getPassword() == null) {
                 throw new IllegalArgumentException("Tous les champs doivent être remplis.");
             }
+            String validationToken = generateValidationToken();
 
             Utilisateur utilisateur1 = new Utilisateur();
+
+            utilisateur.setValidationToken(validationToken);
+            utilisateur.setValidated(false);
 
             utilisateur1.setEmail(utilisateur.getEmail());
 
@@ -83,6 +88,20 @@ public class UtilisateurService {
         } catch (Exception e) {
             throw new RuntimeException("Erreur lors de l'ajout de l'utilisateur : " + e.getMessage());
         }
+    }
+
+    public String generateValidationToken() {
+        return UUID.randomUUID().toString();
+    }
+
+    public boolean validateUserByToken(String token) {
+        Utilisateur user = utilisateurRepository.findByValidationToken(token); // Recherche par token
+        if (user != null && !user.isValidated()) {
+            user.setValidated(true); // Marquer l'utilisateur comme validé
+            utilisateurRepository.save(user); // Sauvegarder
+            return true;
+        }
+        return false; // Token invalide ou utilisateur déjà validé
     }
 
     public void resetEmail(String email) throws Exception {
